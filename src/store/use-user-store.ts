@@ -8,6 +8,7 @@ import http from '@/utils/axios'
 export interface UserInfo {
   name: string
   token: string
+  tokenName: string
   roles: string[]
   codes: string[]
 }
@@ -29,6 +30,7 @@ export const useUserStore = defineStore('user', () => {
     roles: [],
     codes: [],
     token: localStorage.getItem('token') ?? '',
+    tokenName: localStorage.getItem('tokenName') ?? 'Authorization',
   })
 
   async function fetchUpdateUserInfo() {
@@ -51,8 +53,11 @@ export const useUserStore = defineStore('user', () => {
     try {
       loading.value = true
       const res = await Api.login(payload)
-      const token = user.value.token = res.data.token
-      localStorage.setItem('token', token)
+      const { tokenValue, tokenName } = res.data
+      user.value.token = tokenValue
+      user.value.tokenName = tokenName
+      localStorage.setItem('token', tokenValue)
+      localStorage.setItem('tokenName', tokenName)
       const info = await fetchUpdateUserInfo()
       const redirect = route.query.redirect as string ?? HOME_ROUTE_PATH
       await router.push(redirect)
@@ -67,14 +72,27 @@ export const useUserStore = defineStore('user', () => {
     user.value = {
       name: '',
       token: '',
+      tokenName: 'Authorization',
       roles: [],
       codes: [],
     }
     localStorage.removeItem('token')
+    localStorage.removeItem('tokenName')
   }
 
   async function logoutWithQueryRedirect(redirect?: string) {
+    try {
+      // 调用后台登出接口
+      await Api.logout()
+    }
+    catch (error) {
+      // 无论成功失败都继续执行清理和跳转
+      console.warn('登出接口调用失败:', error)
+    }
+
+    // 清理本地token和用户信息
     logout()
+    // 跳转到登录页面
     return router.push({
       path: LOGIN_ROUTE_PATH,
       query: {
@@ -96,7 +114,7 @@ export const useUserStore = defineStore('user', () => {
 
 class Api {
   static login(payload: UserLoginPayload) {
-    return http<{ token: string }>({
+    return http<{ tokenValue: string, tokenName: string }>({
       url: '/user/login',
       method: 'post',
       data: payload,
@@ -106,6 +124,13 @@ class Api {
   static queryUserInfo() {
     return http<Omit<UserInfo, 'token'>>({
       url: '/user/info',
+      method: 'get',
+    })
+  }
+
+  static logout() {
+    return http({
+      url: '/user/logout',
       method: 'get',
     })
   }

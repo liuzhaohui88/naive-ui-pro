@@ -7,7 +7,7 @@ import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
 import Components from 'unplugin-vue-components/vite'
 import { defineConfig } from 'vite'
 // import { analyzer } from 'vite-bundle-analyzer'
-import { vitePluginFakeServer } from 'vite-plugin-fake-server'
+// import { vitePluginFakeServer } from 'vite-plugin-fake-server'
 import { createHtmlPlugin } from 'vite-plugin-html'
 import { preferenceConfig } from './preference'
 
@@ -26,7 +26,8 @@ export default defineConfig(({ mode }) => {
       ],
     },
     define: {
-      __DEV__: mode === 'development',
+      '__DEV__': mode === 'development',
+      'import.meta.env.VITE_API_URL': JSON.stringify('/api'),
     },
     plugins: [
       vue(),
@@ -65,11 +66,12 @@ export default defineConfig(({ mode }) => {
         dts: 'typings/components.d.ts',
       }),
       UnoCSS(),
-      vitePluginFakeServer({
-        logger: false,
-        enableProd: true,
-        include: ['mock'],
-      }),
+      // 注释掉 mock 服务器，使用真实后台接口
+      // vitePluginFakeServer({
+      //   logger: false,
+      //   enableProd: true,
+      //   include: ['mock'],
+      // }),
       // analyzer(),
     ],
     resolve: {
@@ -102,6 +104,11 @@ export default defineConfig(({ mode }) => {
     server: {
       host: true,
       proxy: {
+        '/api': {
+          target: 'http://localhost:9527',
+          changeOrigin: true,
+          rewrite: path => path.replace(/^\/api/, '/api'),
+        },
         '/iconify': {
           target: 'https://api.iconify.design',
           changeOrigin: true,

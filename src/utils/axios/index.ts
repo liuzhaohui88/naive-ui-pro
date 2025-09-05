@@ -1,6 +1,9 @@
+import type { ApiResponse } from './types'
 import axios from 'axios'
 import { setupTokenInterceptor } from './request-interceptors'
 import { setupResponseInterceptors } from './response-interceptors'
+import { specialCodeHandlerManager } from './special-code-handler'
+import { ResultCodeEnum } from './types'
 
 /**
  * 我们提供了 2 种全局错误处理方式
@@ -26,21 +29,29 @@ setupResponseInterceptors(http, {
    * @param response axios 响应体
    * @returns 拆解后的数据
    * @throws 错误消息
-   * @example
-   * ```ts
-   * (response) => response.data.success ? response.data.data : throw new Error(response.data.message)
-   * ```
    */
   unwrapResponseData(response) {
     if (response.data != null) {
-      // 格式: { code: number, data: any, message: string }
-      if ('code' in response.data) {
-        if (response.data.code !== 200) {
-          throw new Error(response.data.message)
+      const apiResponse = response.data as ApiResponse
+
+      // 检查是否是标准的API响应格式
+      if ('success' in apiResponse && 'code' in apiResponse && 'msg' in apiResponse) {
+        const { code, msg, data } = apiResponse
+
+        // 检查是否是成功状态码
+        if (code === ResultCodeEnum.SUCCESS) {
+          return data
         }
-        return response.data.data
+
+        // 检查是否是特殊状态码
+        specialCodeHandlerManager.handle(code, msg, data)
+
+        // 抛出错误消息
+        throw new Error(msg)
       }
     }
+
+    // 如果不是标准格式，直接返回原始数据
     return response.data
   },
 
@@ -49,9 +60,6 @@ setupResponseInterceptors(http, {
    * @param error axios 响应错误
    */
   handleError(error) {
-    // 调用侧将会进入 then 回调并获取数据
-    // return Promise.resolve({})
-
     // 调用侧将会进入 catch 回调，并获取错误对象
     return Promise.reject(error)
   },

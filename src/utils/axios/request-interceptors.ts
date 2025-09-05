@@ -14,8 +14,9 @@ export function setupTokenInterceptor(http: AxiosInstance) {
   http.interceptors.request.use((config) => {
     if (config.addToken !== false) {
       const token = localStorage.getItem('token')
+      const tokenName = localStorage.getItem('tokenName') || 'Authorization'
       if (token) {
-        config.headers.Authorization = `Bearer ${token}`
+        config.headers[tokenName] = `Bearer ${token}`
       }
     }
     return config
