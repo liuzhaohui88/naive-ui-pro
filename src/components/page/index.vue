@@ -19,7 +19,7 @@ const mergedConfig = computed(() => {
   const mergedVLoadingOptions = isBoolean(props.loading)
     ? {
         size: 'large',
-        loading: props.loading,
+        show: props.loading,
       }
     : {
         size: 'large',
@@ -28,8 +28,8 @@ const mergedConfig = computed(() => {
   return {
     footerHeight,
     background: vars.value.cardColor,
+    loadingZIndex: mergedVLoadingOptions.show ? 1 : -1,
     containerPageBottom: slots.footer ? footerHeight : 0,
-    loadingZIndex: mergedVLoadingOptions.loading ? 1 : -1,
     footerPositionBottom: layoutStore.showFooter ? `${layoutStore.footerHeight}px` : 0,
     vLoadingOptions: mergedVLoadingOptions,
   }
@@ -62,10 +62,11 @@ const mergedConfig = computed(() => {
     position: absolute;
     left: 0;
     top: 0;
-    height: 100%;
     z-index: v-bind('mergedConfig.loadingZIndex');
     width: calc(100% - var(--pro-layout-content-margin-left, 0px));
+    height: calc(100% - var(--pro-layout-content-margin-top, 0px));
     margin-left: var(--pro-layout-content-margin-left, 0); // 兼容 sidebar-layout、mixed-sidebar-layout 的布局
+    margin-top: var(--pro-layout-content-margin-top, 0); // 兼容 sidebar-layout、mixed-sidebar-layout 的布局
     transition:
       width 0.3s var(--n-bezier),
       margin-left 0.3s var(--n-bezier);
@@ -79,6 +80,7 @@ const mergedConfig = computed(() => {
     display: flex;
     align-items: center;
     box-sizing: border-box;
+    z-index: 1;
     height: v-bind('mergedConfig.footerHeight');
     background-color: v-bind('mergedConfig.background');
     margin-left: var(--pro-layout-content-margin-left, 0); // 兼容 sidebar-layout、mixed-sidebar-layout 的布局

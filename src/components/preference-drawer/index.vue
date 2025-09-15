@@ -90,7 +90,7 @@ const dropdownOptions = [
     </n-drawer>
 
     <n-float-button
-      v-if="layoutStore.mode === 'full-content'"
+      v-if="layoutStore.mode === 'full-content' || !layoutStore.showNav"
       position="fixed"
       right="10"
       bottom="40"

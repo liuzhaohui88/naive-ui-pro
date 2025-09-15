@@ -2,7 +2,7 @@ import type { RouteRecordRaw } from 'vue-router'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { HOME_ROUTE_PATH, LOGIN_ROUTE_PATH } from '@/router/routes'
+import { LOGIN_ROUTE_PATH } from '@/router/routes'
 import http from '@/utils/axios'
 
 export interface UserInfo {
@@ -23,6 +23,7 @@ export const useUserStore = defineStore('user', () => {
   const route = useRoute()
   const router = useRouter()
   const loading = ref(false)
+  const homePath = '/home' // 当前用户的首页路径
   const routes = ref<RouteRecordRaw[]>([]) // 当前角色拥有的路由，Admin 中根据此数据生成菜单
 
   const user = ref<UserInfo>({
@@ -59,7 +60,7 @@ export const useUserStore = defineStore('user', () => {
       localStorage.setItem('token', tokenValue)
       localStorage.setItem('tokenName', tokenName)
       const info = await fetchUpdateUserInfo()
-      const redirect = route.query.redirect as string ?? HOME_ROUTE_PATH
+      const redirect = route.query.redirect as string ?? homePath
       await router.push(redirect)
       return info
     }
@@ -105,6 +106,7 @@ export const useUserStore = defineStore('user', () => {
     login,
     logout,
     routes,
+    homePath,
     fetchUpdateUserInfo,
     loginLoading: loading,
     logoutWithQueryRedirect,

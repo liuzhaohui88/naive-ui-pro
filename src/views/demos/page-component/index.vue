@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { NButton, NText } from 'naive-ui'
+import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
+import { useLayoutStore } from '@/store/use-layout-store'
 
 const itemCount = ref(10)
 const loading = ref(false)
 const loadingTime = ref(3000)
+const { mobile } = storeToRefs(useLayoutStore())
 
 function random(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min
@@ -22,8 +25,8 @@ function startLoading() {
 <template>
   <pro-page
     :loading="{
-      loading,
-      text: $t('pages.demos.pageComponent.loadingText'),
+      show: loading,
+      description: $t('pages.demos.pageComponent.loadingText'),
     }"
   >
     <div class="mb-6">
@@ -59,6 +62,7 @@ function startLoading() {
             {{ $t('pages.demos.pageComponent.randomNumber') }}
           </n-button>
           <n-input-number
+            v-if="!mobile"
             v-model:value="loadingTime"
             :min="1000"
             :max="30000"

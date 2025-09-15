@@ -1,7 +1,7 @@
 import type { App } from 'vue'
 import { preferenceConfig } from '@root/preference'
 import { cloneDeep, merge } from 'lodash-es'
-import { create, ProInput, ProSelect } from 'pro-naive-ui'
+import { create, ProDateTime, ProInput, ProSelect } from 'pro-naive-ui'
 import { ProIconifyIcons, ProIconifyIcons2 } from './components/iconify-icons'
 import { WangEditor } from './components/wang-editor'
 import { setupDirective } from './directive'
@@ -29,6 +29,7 @@ function setupComponents(app: App) {
     components: [
       ProInput,
       ProSelect,
+      ProDateTime,
     ],
   }))
   app.component(ProIconifyIcons.name!, ProIconifyIcons)

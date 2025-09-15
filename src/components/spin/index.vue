@@ -28,7 +28,7 @@ const size = computed(() => {
 })
 
 const backgroundSize = computed(() => {
-  const scale = 3.4
+  const scale = 3.3
   const finalSize = size.value / scale
   return `${finalSize}px ${finalSize}px`
 })

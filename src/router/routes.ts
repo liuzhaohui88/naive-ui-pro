@@ -2,11 +2,6 @@ import type { Component } from 'vue'
 import type { RouteRecordRaw } from 'vue-router'
 
 /**
- * 首页路由名称
- */
-const HOME_ROUTE_PATH = '/home'
-
-/**
  * 登录路由名称
  */
 const LOGIN_ROUTE_PATH = '/login'
@@ -30,7 +25,6 @@ const notFoundRoute: RouteRecordRaw = {
 const rootRoute = {
   path: '/',
   name: ROOT_ROUTE_NAME,
-  redirect: HOME_ROUTE_PATH,
   component: () => import('@/components/layout/index.vue'),
   children: [],
   meta: {
@@ -58,7 +52,7 @@ const ignoreAccessRoutes: RouteRecordRaw[] = [
  */
 const accessRoutes: RouteRecordRaw[] = [
   {
-    path: HOME_ROUTE_PATH,
+    path: '/home',
     component: () => import('@/views/home/index.vue'),
     meta: {
       title: '首页',
@@ -325,6 +319,15 @@ const accessRoutes: RouteRecordRaw[] = [
         },
       },
       {
+        path: 'complex-form',
+        component: () => import('@/views/demos/complex-form/index.vue'),
+        meta: {
+          title: '复杂表单',
+          titleI18nKey: 'routes.complexForm',
+          icon: 'material-symbols:dynamic-form-outline',
+        },
+      },
+      {
         path: 'icon',
         component: () => import('@/views/demos/icon/index.vue'),
         meta: {
@@ -403,7 +406,6 @@ const pageMap = Object.entries(matched).reduce<Record<string, Component>>((p, [p
 
 export {
   accessRoutes,
-  HOME_ROUTE_PATH,
   ignoreAccessRoutes,
   LOGIN_ROUTE_PATH,
   notFoundRoute,

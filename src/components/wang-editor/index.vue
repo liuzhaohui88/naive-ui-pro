@@ -160,6 +160,7 @@ Boot.registerPlugin(withEmptyHtmlPlugin)
 
 <style scoped>
 .wangeditor-wrapper {
+  width: 100%;
   /* 自定义 wangeditor 主题 */
   --w-e-toolbar-bg-color: v-bind('vars.baseColor');
   --w-e-textarea-bg-color: v-bind('vars.baseColor');
