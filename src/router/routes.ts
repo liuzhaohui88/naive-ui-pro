@@ -261,6 +261,39 @@ const accessRoutes: RouteRecordRaw[] = [
         },
       },
       {
+        path: 'nested-detail2',
+        component: () => import('@/views/demos/nested/demo2/index.vue'),
+        redirect: { name: 'nestedDetail2:detail1' },
+        children: [
+          {
+            path: 'detail1',
+            name: 'nestedDetail2:detail1',
+            component: () => import('@/views/demos/nested/demo2/detail1.vue'),
+            meta: {
+              title: '详情页（1）',
+              titleI18nKey: 'routes.detail1',
+              hideInMenu: true,
+            },
+          },
+          {
+            path: 'detail2',
+            name: 'nestedDetail2:detail2',
+            component: () => import('@/views/demos/nested/demo2/detail2.vue'),
+            meta: {
+              title: '详情页（2）',
+              titleI18nKey: 'routes.detail2',
+              hideInMenu: true,
+            },
+          },
+        ],
+        meta: {
+          title: '嵌套详情页（2）',
+          titleI18nKey: 'routes.nestedDetail2',
+          icon: 'bx:detail',
+          nestedRouteRenderEnd: true,
+        },
+      },
+      {
         path: 'keep-alive',
         children: [
           {
